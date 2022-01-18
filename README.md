@@ -71,3 +71,6 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## About the App
+The app is made while learning NestJS. Using this app you can keep track of your Cats. And you can do all the CRUD operations using this App.
