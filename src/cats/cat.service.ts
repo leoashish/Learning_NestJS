@@ -1,37 +1,56 @@
 import {Injectable} from "@nestjs/common";
-import {Cat} from "./interfaces/cat.interface";
-
+import {Cat} from "./cats.entity";
+import { CatRepository } from "./cats.repository";
+import { InjectRepository } from "@nestjs/typeorm";
+import { CreateItemDto } from "./dto/create-item_dto";
 
 
 @Injectable()
 export class CatsService{
-    private cats: Cat[] = [];
+    constructor(@InjectRepository(CatRepository) private catRepository:CatRepository){}
 
-    create(cat: Cat): Cat
+
+
+    async create(cat: CreateItemDto): Promise<Cat>
     {
-        this.cats.push(cat);
-        return cat; 
+        const cat_1 = new Cat();
+        cat_1.name = cat.name;
+        cat_1.breed = cat.breed; 
+        cat_1.age = cat.age; 
+        cat_1.color = cat.color;
+        
+        cat_1.save(); 
+
+        return cat_1; 
     }
     
-    findOne(id: number): Cat[]{
-        return this.cats.filter(c  =>{ c.cat_id === id});
-         
+    async findOne(id: number):  Promise<Cat>{
+        const found = await this.catRepository.findOne({cat_id: id});
+        return found; 
     }
-    findAll():Cat[] {
-        return this.cats;
+    async findAll(): Promise<Cat[]> {
+        const found = await this.catRepository.find();
+
+        return found; 
     }
 
-    update(id:number , cat:Cat): Cat {
-        this.cats[id] = cat; 
-        return this.cats[id]; 
-    }
-
-    delete(id: number): Cat{
+    async update(id:number , cat:Cat): Promise<Cat> {
         
-        var ans = this.cats[id]; 
-        this.cats = this.cats.filter(c => c.cat_id !==  id);
+        const found = await this.catRepository.findOne({cat_id : id});
+        found.name = cat.name; 
+        found.age = cat.age;
+        found.color = cat.color; 
+        found.breed = cat.breed; 
 
-        return ans ; 
+        await found.save(); 
+
+        
+        return found; 
+    }
+
+    async delete(id: number): Promise<void> {
+        await this.catRepository.delete(id);
+        
     }
 
 
