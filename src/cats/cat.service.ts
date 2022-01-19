@@ -13,44 +13,47 @@ export class CatsService{
 
     async create(cat: CreateItemDto): Promise<Cat>
     {
-        const cat_1 = new Cat();
-        cat_1.name = cat.name;
-        cat_1.breed = cat.breed; 
-        cat_1.age = cat.age; 
-        cat_1.color = cat.color;
+        const new_cat = new Cat();
+        new_cat.name = cat.name;
+        new_cat.breed = cat.breed; 
+        new_cat.age = cat.age; 
+        new_cat.color = cat.color;
         
-        cat_1.save(); 
+        await new_cat.save(); 
 
-        return cat_1; 
+        return new_cat; 
     }
     
-    async findOne(id: number):  Promise<Cat>{
-        const found = await this.catRepository.findOne({cat_id: id});
-        return found; 
+    async findOne(id: number):  Promise<Cat|undefined>{
+        const found_cat = await this.catRepository.findOne({cat_id: id});
+        
+        return found_cat; 
     }
     async findAll(): Promise<Cat[]> {
-        const found = await this.catRepository.find();
+        const found_cats = await this.catRepository.find();
 
-        return found; 
+        return found_cats; 
     }
 
-    async update(id:number , cat:Cat): Promise<Cat> {
-        
-        const found = await this.catRepository.findOne({cat_id : id});
-        found.name = cat.name; 
-        found.age = cat.age;
-        found.color = cat.color; 
-        found.breed = cat.breed; 
+    async update(createItemDto:CreateItemDto): Promise<Cat> {
+        const id = createItemDto.cat_id; 
+        const cat = await this.catRepository.findOne({cat_id: id});
 
-        await found.save(); 
+        cat.name = createItemDto.name; 
+        cat.breed = createItemDto.breed; 
+        cat.age = createItemDto.age; 
+        cat.color = createItemDto.color; 
 
-        
-        return found; 
+        await cat.save();
+        return cat;
     }
 
-    async delete(id: number): Promise<void> {
-        await this.catRepository.delete(id);
+    async delete(name: string): Promise<void> {
+        await this.catRepository.delete({name: name});
         
+        //Alternate way to do it.
+        //const id = this.catRepository.find({name: name});
+        // await this.catRepository.delete(id)
     }
 
 

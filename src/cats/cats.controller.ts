@@ -2,6 +2,7 @@ import { Controller, Get , Post , Put , Delete , Body , Param} from '@nestjs/com
 import { CreateItemDto } from './dto/create-item_dto';
 import { CatsService } from './cat.service';
 import {Cat} from "./cats.entity";
+import { CatRepository } from './cats.repository';
 
 
 @Controller('cats')
@@ -24,19 +25,14 @@ export class CatsController {
 
     @Put(':id')
     async update(@Param() param , @Body() createItemDto:CreateItemDto): Promise<Cat>{
-
-        const cat = new Cat();
-        cat.name= createItemDto.name;
-        cat.breed = createItemDto.breed;
-        cat.age = createItemDto.age; 
-        cat.color = createItemDto.color;
-        return this.catsService.update(param.id , cat);
-
+        createItemDto.cat_id = param.id; 
+        return this.catsService.update(createItemDto);
     }
 
-    @Delete(":id")
-    async delete(@Param() param , @Body() createItemDto): Promise<void>{
-        return this.catsService.delete(param.id); 
+    @Delete(":name")
+    async delete(@Param("name") name:string): Promise<void>{
+        // 
+        this.catsService.delete(name);
     }
 
 }
